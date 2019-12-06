@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.inputmethod.InputMethodManager;
+import android.view.WindowInsets;
 
 // import additionally required classes for calculating screen height
 import android.view.Display;
@@ -91,20 +92,14 @@ public class CDVIonicKeyboard extends CordovaPlugin {
                             int rootViewHeight = rootView.getRootView().getHeight();
                             int resultBottom = r.bottom;
 
-                            // calculate screen height differently for android versions >= 21: Lollipop 5.x, Marshmallow 6.x
-                            //http://stackoverflow.com/a/29257533/3642890 beware of nexus 5
-                            int screenHeight;
-
-                            if (Build.VERSION.SDK_INT >= 21) {
-                                Display display = cordova.getActivity().getWindowManager().getDefaultDisplay();
-                                Point size = new Point();
-                                display.getSize(size);
-                                screenHeight = size.y;
-                            } else {
-                                screenHeight = rootViewHeight;
+                            int bottomInset = 0;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                                View decorView = cordova.getActivity().getWindow().getDecorView();
+                                WindowInsets windowInsets = decorView.getRootWindowInsets();
+                                bottomInset = windowInsets.getSystemWindowInsetBottom();
                             }
 
-                            int heightDiff = screenHeight - resultBottom;
+                            int heightDiff = rootViewHeight - resultBottom - bottomInset;
 
                             int pixelHeightDiff = (int)(heightDiff / density);
                             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
