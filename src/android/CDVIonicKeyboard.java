@@ -37,7 +37,7 @@ public class CDVIonicKeyboard extends CordovaPlugin {
 
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
         if ("hide".equals(action)) {
-            cordova.getThreadPool().execute(new Runnable() {
+            cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                     //http://stackoverflow.com/a/7696791/1091751
                     InputMethodManager inputManager = (InputMethodManager) cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -54,7 +54,7 @@ public class CDVIonicKeyboard extends CordovaPlugin {
             return true;
         }
         if ("show".equals(action)) {
-            cordova.getThreadPool().execute(new Runnable() {
+            cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                     ((InputMethodManager) cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
                     callbackContext.success(); // Thread-safe.
@@ -63,7 +63,7 @@ public class CDVIonicKeyboard extends CordovaPlugin {
             return true;
         }
         if ("init".equals(action)) {
-            cordova.getThreadPool().execute(new Runnable() {
+            cordova.getActivity().runOnUiThread(new Runnable() {
                 public void run() {
                 	//calculate density-independent pixels (dp)
                     //http://developer.android.com/guide/practices/screens_support.html
